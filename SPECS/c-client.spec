@@ -2,9 +2,21 @@
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
 
-Name:    lib%{soname}
+%{?scl:%global _scl_prefix /opt/cpanel}
+%{?scl:%scl_package lib%{soname}}
+%{?scl:BuildRequires: scl-utils-build}
+%{?scl:Requires: %scl_runtime}
+%{!?scl:%global pkg_name %{name}}
+
+# backwards compatibility so people can build this outside of SCL
+%{!?scl:%global _root_sysconfdir %_sysconfdir}
+%{!?scl:%global _root_sbindir %_sbindir}
+%{!?scl:%global _root_includedir %_includedir}
+%{!?scl:%global _root_libdir %_libdir}
+
+Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
-Release: 5%{?dist}.1
+Release: 6%{?dist}.1
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
 URL:     http://www.washington.edu/imap/
@@ -19,9 +31,7 @@ Patch9: imap-2007e-shared.patch
 Patch10: imap-2007e-authmd5.patch
 Patch11: imap-2007f-cclient-only.patch
 
-BuildRequires: krb5-devel
-BuildRequires: openssl-devel
-BuildRequires: pam-devel
+BuildRequires: krb5-devel%{?_isa}, openssl-devel%{?_isa}, pam-devel%{?_isa}
 
 %description
 Provides a common API for accessing mailboxes. 
@@ -29,8 +39,8 @@ Provides a common API for accessing mailboxes.
 %package devel
 Summary: Development tools for programs which will use the UW IMAP library
 Group:   Development/Libraries
-Requires: libc-client%{?_isa} = %{version}-%{release}
-Provides:  libc-client-devel%{?_isa} = %{version}-%{release}
+Requires: %{?scl_prefix}%{pkg_name}%{?_isa} = %{version}-%{release}
+Provides: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
 
 %description devel
 Contains the header files and libraries for developing programs 
@@ -39,9 +49,9 @@ which will use the UW C-client common API.
 %package static 
 Summary: UW IMAP static library
 Group:   Development/Libraries
-Requires: %{name}-devel%{?_isa} = %{version}-%{release}
-Provides: libc-client-static%{?_isa} = %{version}-%{release}
-Requires: krb5-devel openssl-devel pam-devel
+Requires: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
+Provides: %{?scl_prefix}%{pkg_name}-static%{?_isa} = %{version}-%{release}
+Requires: krb5-devel%{?_isa}, openssl-devel%{?_isa}, pam-devel%{?_isa}
 
 %description static 
 Contains static libraries for developing programs 
@@ -57,8 +67,8 @@ which will use the UW C-client common API.
 
 %build
 # Kerberos setup
-test -f %{_sysconfdir}/profile.d/krb5-devel.sh && source %{_sysconfdir}/profile.d/krb5-devel.sh
-test -f %{_sysconfdir}/profile.d/krb5.sh && source %{_sysconfdir}/profile.d/krb5.sh
+test -f %{_root_sysconfdir}/profile.d/krb5-devel.sh && source %{_root_sysconfdir}/profile.d/krb5-devel.sh
+test -f %{_root_sysconfdir}/profile.d/krb5.sh && source %{_root_sysconfdir}/profile.d/krb5.sh
 GSSDIR=$(krb5-config --prefix)
 
 # SSL setup, probably legacy-only, but shouldn't hurt -- Rex
@@ -75,7 +85,7 @@ IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
 EXTRAAUTHENTICATORS=gss \
-SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=%{ssldir} SSLINCLUDE=%{_includedir}/openssl SSLKEYS=%{ssldir}/private SSLLIB=%{_libdir}" \
+SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_root_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=%{ssldir} SSLINCLUDE=%{_root_includedir}/openssl SSLKEYS=%{ssldir}/private SSLLIB=%{_root_libdir}" \
 SSLTYPE=unix \
 CCLIENTLIB=$(pwd)/c-client/%{shlibname} \
 SHLIBBASE=%{soname} \
@@ -104,9 +114,11 @@ install -m644 ./c-client/*.h %{buildroot}%{_includedir}/imap/
 install -m644 ./c-client/linkage.c %{buildroot}%{_includedir}/imap/
 install -m644 ./src/osdep/tops-20/shortsym.h %{buildroot}%{_includedir}/imap/
 
+%if 0%{?!scl:1}
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -129,6 +141,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Thu Jan 28 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2007f-6.1
+- Converted to SCL-compatible package
+
 * Thu Jan 28 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2007f-5.1
 - Package now only compiles libc-client for cPanel PHP packages
 
