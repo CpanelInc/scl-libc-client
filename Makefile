@@ -8,7 +8,7 @@
 OBS_PROJECT := EA4
 
 # the package name in OBS
-OBS_PACKAGE := scl-uwimap
+OBS_PACKAGE := scl-libc-client
 
 #-------------------------------------------------------------------------------------
 #
