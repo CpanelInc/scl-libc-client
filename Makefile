@@ -121,10 +121,11 @@ check:
 	@[ -x /usr/bin/build ] || make errmsg
 	@[ -d .git ] || DISPMSG="This isn't a git repository." make -e errmsg
 	@[ -n "$(ARCH)" ] || DISPMSG="Unable to determine host architecture type using ARCH environment variable" make -e errmsg
-	@[ -x /usr/bin/rpmlint ] || DISPMSG="You should use YUM to install the 'rpmlint' package" make -e warnmsg
+	@[ -z "$(bamboo_repository_git_branch)" ] && ( [ -x /usr/bin/rpmlint ] || DISPMSG="You should use YUM to install the 'rpmlint' package" make -e warnmsg ) || exit 0
 
 warnmsg:
 	@echo -e "\nWARNING: Your last command encountered a problem.\n $(DISPMSG)\n"
+	exit 0
 
 errmsg:
 	@echo -e "\nERROR: You haven't set up OBS correctly on your machine.\n $(DISPMSG)\n"
