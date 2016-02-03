@@ -108,11 +108,11 @@ install -p -m644 -D c-client.cf %{buildroot}%{_sysconfdir}/c-client.cf
 : Installing development components
 ln -s %{shlibname} %{buildroot}%{_libdir}/lib%{soname}.so
 
-mkdir -p %{buildroot}%{_includedir}/imap/
-install -m644 ./c-client/*.h %{buildroot}%{_includedir}/imap/
+mkdir -p %{buildroot}%{_includedir}/c-client/
+install -m644 ./c-client/*.h %{buildroot}%{_includedir}/c-client/
 # Added linkage.c to fix (#34658) <mharris>
-install -m644 ./c-client/linkage.c %{buildroot}%{_includedir}/imap/
-install -m644 ./src/osdep/tops-20/shortsym.h %{buildroot}%{_includedir}/imap/
+install -m644 ./c-client/linkage.c %{buildroot}%{_includedir}/c-client/
+install -m644 ./src/osdep/tops-20/shortsym.h %{buildroot}%{_includedir}/c-client/
 
 %if 0%{?!scl:1}
 %post -p /sbin/ldconfig
@@ -132,7 +132,7 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root,-)
-%{_includedir}/imap/
+%{_includedir}/c-client/
 %{_libdir}/lib%{soname}.so
 
 %files static
