@@ -174,7 +174,7 @@ check:
 	@[ -x $(BUILD) ] || make errmsg
 	@[ -n "$(ARCH)" ] || DISPMSG="Unable to determine host architecture type using ARCH environment variable" make -e errmsg
 	@[ -n "$(SCL_TARGETS)" ] || DISPMSG="You haven't defined any SCL targts in the macros/ directory." make -e errmsg
-	$(foreach target,$(SCL_TARGETS),@$(OSC) api -X GET /source/$(BRANCH_PROJECT)/$(target) &>/dev/null || DISPMSG="Failed to find the $(BRANCH_PROJECT):$(target) OBS project" make -e errmsg;)
+	@$(foreach target,$(SCL_TARGETS),$(OSC) api -X GET /source/$(BRANCH_PROJECT)/$(target) &>/dev/null || DISPMSG="Failed to find the $(BRANCH_PROJECT):$(target) OBS project" make -e errmsg;)
 
 warnmsg:
 	@echo -e "\nWARNING: $(DISPMSG)\n";
