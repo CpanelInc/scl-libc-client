@@ -168,8 +168,8 @@ check:
 	@[ -n "$(OBS_PROJECT)" ] || DISPMSG="You must define the OBS_PROJECT variable in your Makefile" make -e errmsg
 	@[ -d .git ] || DISPMSG="This isn't a git repository." make -e errmsg
 	@[ -n "$(GIT_BRANCH)" ] || DISPMSG="Are you sure you're in a git repository?" make -e errmsg
-	@rpm -q osc &>/dev/null || make -e errmsg
-	@rpm -q build &>/dev/null || make errmsg
+	@[ -z "$(bamboo_repository_git_branch)" ] && ( rpm -q osc &>/dev/null || make errmsg ) || exit 0
+	@[ -z "$(bamboo_repository_git_branch)" ] && ( rpm -q build &>/dev/null || make errmsg ) || exit 0
 	@[ -z "$(bamboo_repository_git_branch)" ] && ( [ -x $(RPMLINT) ] || DISPMSG="You should use YUM to install the 'rpmlint' package" make -e warnmsg ) || exit 0
 	@[ -e ~/.oscrc ] || make errmsg
 	@[ -n "$(OBS_USERNAME)" ] || make errmsg
