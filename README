@@ -1,6 +1,0 @@
-University of Washington IMAP and c-client libraries
-
-This is principally used because CentOS pushed libc-client
-into EPEL, which we won't rely on.  The consequence of this
-is that we can't release the PHP imap extension without
-the c-client library.
