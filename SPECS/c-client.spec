@@ -16,7 +16,9 @@
 
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
-Release: 6%{?dist}.1
+# Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
+%define release_prefix 7
+Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
 URL:     http://www.washington.edu/imap/
@@ -141,6 +143,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 2007f-7
+- EA-4383: Update Release value to OBS-proof versioning
+
 * Thu Jan 28 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2007f-6.1
 - Converted to SCL-compatible package
 
