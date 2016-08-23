@@ -17,7 +17,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 7
+%define release_prefix 8
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Aug 01 2016 Edwin Buck <e.buck@cpanel.net> - 2007f-8
+- EA-4940: Added support for php71.
+
 * Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 2007f-7
 - EA-4383: Update Release value to OBS-proof versioning
 
