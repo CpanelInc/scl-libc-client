@@ -17,11 +17,12 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 8
+%define release_prefix 9
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
 URL:     http://www.washington.edu/imap/
+Vendor: cPanel, Inc.
 License: ASL 2.0 
 Source0: ftp://ftp.cac.washington.edu/imap/imap-%{version}%{?beta}%{?dev}%{?snap}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -143,6 +144,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Fri Dec 16 2016 Jacob Perkins <jacob.perkins@cpanel.net> - 2007f-9
+- EA-5493: Added vendor field
+
 * Mon Aug 01 2016 Edwin Buck <e.buck@cpanel.net> - 2007f-8
 - EA-4940: Added support for php71.
 
