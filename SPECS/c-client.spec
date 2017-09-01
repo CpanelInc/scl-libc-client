@@ -17,7 +17,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 9
+%define release_prefix 10
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
@@ -144,6 +144,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue Aug 22 2017 Dan Muey <dan@cpanel.net> - 2007f-10
+- ZC-2810: Add 7.2 support
+
 * Fri Dec 16 2016 Jacob Perkins <jacob.perkins@cpanel.net> - 2007f-9
 - EA-5493: Added vendor field
 
