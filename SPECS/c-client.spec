@@ -17,7 +17,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 10
+%define release_prefix 11
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library 
 Group:   System Environment/Libraries
@@ -34,7 +34,7 @@ Patch9: imap-2007e-shared.patch
 Patch10: imap-2007e-authmd5.patch
 Patch11: imap-2007f-cclient-only.patch
 
-BuildRequires: krb5-devel%{?_isa}, openssl-devel%{?_isa}, pam-devel%{?_isa}
+BuildRequires: krb5-devel%{?_isa}, ea-openssl, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
 
 %description
 Provides a common API for accessing mailboxes. 
@@ -54,7 +54,7 @@ Summary: UW IMAP static library
 Group:   Development/Libraries
 Requires: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}%{pkg_name}-static%{?_isa} = %{version}-%{release}
-Requires: krb5-devel%{?_isa}, openssl-devel%{?_isa}, pam-devel%{?_isa}
+Requires: krb5-devel%{?_isa}, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
 
 %description static 
 Contains static libraries for developing programs 
@@ -75,12 +75,14 @@ test -f %{_root_sysconfdir}/profile.d/krb5.sh && source %{_root_sysconfdir}/prof
 GSSDIR=$(krb5-config --prefix)
 
 # SSL setup, probably legacy-only, but shouldn't hurt -- Rex
+export PKG_CONFIG_PATH="/opt/cpanel/ea-openssl/lib/pkgconfig/"
 export EXTRACFLAGS="$EXTRACFLAGS $(pkg-config --cflags openssl 2>/dev/null)"
 # $RPM_OPT_FLAGS
 export EXTRACFLAGS="$EXTRACFLAGS -fPIC $RPM_OPT_FLAGS"
 # jorton added these, I'll assume he knows what he's doing. :) -- Rex
 export EXTRACFLAGS="$EXTRACFLAGS -fno-strict-aliasing"
 export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null)"
 
 echo -e "y\ny" | \
 make %{?_smp_mflags} lnp \
@@ -88,7 +90,7 @@ IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
 EXTRAAUTHENTICATORS=gss \
-SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_root_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=%{ssldir} SSLINCLUDE=%{_root_includedir}/openssl SSLKEYS=%{ssldir}/private SSLLIB=%{_root_libdir}" \
+SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_root_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=/opt/cpanel/ea-openssl SSLINCLUDE=/opt/cpanel/ea-openssl/include SSLKEYS=%{ssldir}/private SSLLIB=/opt/cpanel/ea-openssl/lib" \
 SSLTYPE=unix \
 CCLIENTLIB=$(pwd)/c-client/%{shlibname} \
 SHLIBBASE=%{soname} \
@@ -144,6 +146,10 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Thu Jan 25 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-11
+- EA-7182: Build against ea-openssl to ensure that any IMAP ssl
+  calls made via PHP are functional.
+
 * Tue Aug 22 2017 Dan Muey <dan@cpanel.net> - 2007f-10
 - ZC-2810: Add 7.2 support
 
