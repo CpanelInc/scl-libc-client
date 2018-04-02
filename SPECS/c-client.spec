@@ -1,6 +1,7 @@
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
+%define ea_openssl_ver 1.0.2n-3
 
 %{?scl:%global _scl_prefix /opt/cpanel}
 %{?scl:%scl_package lib%{soname}}
@@ -17,13 +18,13 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 11
+%define release_prefix 12
 Release: %{release_prefix}%{?dist}.cpanel
-Summary: UW C-client mail library 
+Summary: UW C-client mail library
 Group:   System Environment/Libraries
 URL:     http://www.washington.edu/imap/
 Vendor: cPanel, Inc.
-License: ASL 2.0 
+License: ASL 2.0
 Source0: ftp://ftp.cac.washington.edu/imap/imap-%{version}%{?beta}%{?dev}%{?snap}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -34,10 +35,10 @@ Patch9: imap-2007e-shared.patch
 Patch10: imap-2007e-authmd5.patch
 Patch11: imap-2007f-cclient-only.patch
 
-BuildRequires: krb5-devel%{?_isa}, ea-openssl, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
+BuildRequires: krb5-devel%{?_isa}, ea-openssl >= %{ea_openssl_ver}, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
 
 %description
-Provides a common API for accessing mailboxes. 
+Provides a common API for accessing mailboxes.
 
 %package devel
 Summary: Development tools for programs which will use the UW IMAP library
@@ -46,18 +47,18 @@ Requires: %{?scl_prefix}%{pkg_name}%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
 
 %description devel
-Contains the header files and libraries for developing programs 
+Contains the header files and libraries for developing programs
 which will use the UW C-client common API.
 
-%package static 
+%package static
 Summary: UW IMAP static library
 Group:   Development/Libraries
 Requires: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}%{pkg_name}-static%{?_isa} = %{version}-%{release}
 Requires: krb5-devel%{?_isa}, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
 
-%description static 
-Contains static libraries for developing programs 
+%description static
+Contains static libraries for developing programs
 which will use the UW C-client common API.
 
 %prep
@@ -82,7 +83,7 @@ export EXTRACFLAGS="$EXTRACFLAGS -fPIC $RPM_OPT_FLAGS"
 # jorton added these, I'll assume he knows what he's doing. :) -- Rex
 export EXTRACFLAGS="$EXTRACFLAGS -fno-strict-aliasing"
 export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
-export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null)"
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl/lib"
 
 echo -e "y\ny" | \
 make %{?_smp_mflags} lnp \
@@ -130,7 +131,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE.txt NOTICE SUPPORT 
+%doc LICENSE.txt NOTICE SUPPORT
 %doc docs/SSLBUILD docs/RELNOTES docs/*.txt
 %ghost %config(missingok,noreplace) %{_sysconfdir}/c-client.cf
 %{_libdir}/lib%{soname}.so.*
@@ -146,6 +147,11 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
+- ZC-3552: Added versioning to ea-openssl requirements.
+- ZC-3552: Linked to shared openssl .so's.
+- ZC-3552: Whitespace clean up.
+
 * Thu Jan 25 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-11
 - EA-7182: Build against ea-openssl to ensure that any IMAP ssl
   calls made via PHP are functional.
@@ -184,7 +190,7 @@ rm -rf %{buildroot}
 - imap-2007f
 
 * Mon Jun 13 2011 Rex Dieter <rdieter@fedoraproject.org> 2007e-13
-- _with_system_libc_client option (el6+) 
+- _with_system_libc_client option (el6+)
 - tight deps via %%?_isa
 - drop extraneous Requires(post,postun): xinetd
 
@@ -199,7 +205,7 @@ rm -rf %{buildroot}
 - use password-auth common PAM configuration instead of system-auth
   where available
 
-* Mon Aug 31 2009 Rex Dieter <rdieter@fedoraproject.org> 
+* Mon Aug 31 2009 Rex Dieter <rdieter@fedoraproject.org>
 - omit -devel, -static bits in EPEL builds (#518885)
 
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 2007e-9
@@ -250,7 +256,7 @@ rm -rf %{buildroot}
 * Thu Mar 13 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a-1
 - imap-2007a
 
-* Fri Feb 08 2008 Rex Dieter <rdieter@fedoraproject.org> 2007-3 
+* Fri Feb 08 2008 Rex Dieter <rdieter@fedoraproject.org> 2007-3
 - respin (gcc43)
 
 * Wed Jan 23 2008 Rex Dieter <rdieter@fedoraproject.org> 2007-2
@@ -335,7 +341,7 @@ rm -rf %{buildroot}
 - omit static lib (for now, at least)
 
 * Mon Sep 25 2006 Rex Dieter <rexdieter[AT]users.sf.net> 2006-4
-- -devel-static: package static lib separately. 
+- -devel-static: package static lib separately.
 
 * Mon Sep 25 2006 Rex Dieter <rexdieter[AT]users.sf.net> 2006-3
 - License: Apache 2.0
@@ -345,13 +351,13 @@ rm -rf %{buildroot}
 - change default (CREATEPROTO) driver to mix
 - Obsolete old libc-clients
 
-* Tue Aug 29 2006 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-6 
+* Tue Aug 29 2006 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-6
 - fc6 respin
 
 * Fri Aug 18 2006 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-5
 - cleanup, respin for fc6
 
-* Wed Mar 1 2006 Rex Dieter <rexdieter[AT]users.sf.net> 
+* Wed Mar 1 2006 Rex Dieter <rexdieter[AT]users.sf.net>
 - fc5: gcc/glibc respin
 
 * Thu Nov 17 2005 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-4
@@ -361,7 +367,7 @@ rm -rf %{buildroot}
 * Thu Nov 17 2005 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-3
 - omit trailing whitespace in default c-client.cf
 
-* Wed Nov 16 2005 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-2 
+* Wed Nov 16 2005 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-2
 - rebuild for new openssl
 
 * Mon Sep 26 2005 Rex Dieter <rexdieter[AT]users.sf.net> 2004g-1
@@ -376,7 +382,7 @@ rm -rf %{buildroot}
 
 * Fri Apr 29 2005 Rex Dieter <rexdieter[AT]users.sf.net> 1:2004d-1
 - 2004d
-- imap-libs -> lib%%{soname}%%{version} (ie, libc-client2004d), so we can 
+- imap-libs -> lib%%{soname}%%{version} (ie, libc-client2004d), so we can
   have multiple versions (shared-lib only) installed
 - move mlock to -utils.
 - revert RFC2301, locks out too many folks where SSL is unavailable
@@ -422,12 +428,12 @@ rm -rf %{buildroot}
 * Wed Jul 07 2004 Rex Dieter <rexdieter at sf.net> 2004-0.fdr.1
 - imap-2004
 - use mlock, if available.
-- Since libc-client is an attrocious name choice, we'll trump it, 
+- Since libc-client is an attrocious name choice, we'll trump it,
   and provide imap, imap-libs, imap-devel instead (redhat bug #120873)
 
 * Wed Apr 07 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 2002e-4
 - Use CFLAGS (and RPM_OPT_FLAGS) during the compilation
-- Build the .so through gcc instead of directly calling ld 
+- Build the .so through gcc instead of directly calling ld
 
 * Fri Mar  5 2004 Joe Orton <jorton@redhat.com> 2002e-3
 - install .so with permissions 0755
