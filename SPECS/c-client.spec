@@ -1,7 +1,7 @@
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
-%define ea_openssl_ver 1.0.2n-3
+%define ea_openssl_ver 1.0.2o-2
 
 %{?scl:%global _scl_prefix /opt/cpanel}
 %{?scl:%scl_package lib%{soname}}
@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 12
+%define release_prefix 13
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -147,6 +147,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-13
+- EA-7382: Update dependency on ea-openssl to require the latest version with versioned symbols.
+
 * Mon Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
 - ZC-3552: Added versioning to ea-openssl requirements.
 - ZC-3552: Linked to shared openssl .so's.
