@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 13
+%define release_prefix 14
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -147,6 +147,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue Feb 05 2019 Daniel Muey <dan@cpanel.net> - %{somajor}f-14
+- ZC-4640: Add PHP 7.3
+
 * Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-13
 - EA-7382: Update dependency on ea-openssl to require the latest version with versioned symbols.
 
