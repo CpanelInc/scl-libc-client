@@ -156,7 +156,7 @@ rm -rf %{buildroot}
 * Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-13
 - EA-7382: Update dependency on ea-openssl to require the latest version with versioned symbols.
 
-* Mon Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
+* Tue Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
 - ZC-3552: Added versioning to ea-openssl requirements.
 - ZC-3552: Linked to shared openssl .so's.
 - ZC-3552: Whitespace clean up.
@@ -251,7 +251,7 @@ rm -rf %{buildroot}
 * Fri Jun 13 2008 Rex Dieter <rdieter@fedoraproject.org> 2007b-1
 - imap-2007b
 
-* Tue May 18 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-3
+* Sun May 18 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-3
 - libc-client: incomplete list of obsoletes (#446240)
 
 * Wed Mar 19 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-2
@@ -422,7 +422,7 @@ rm -rf %{buildroot}
 - remove Obsoletes/Provides: libc-client (they can, in fact, co-xist)
 - -devel: remove O/P: libc-client-devel -> Conflicts: libc-client-devel
 
-* Thu Jul 16 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.5.a
+* Fri Jul 16 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.5.a
 - imap2004a
 
 * Tue Jul 13 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.4
