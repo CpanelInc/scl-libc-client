@@ -1,7 +1,7 @@
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
-%define ea_openssl_ver 1.1.1
+%define ea_openssl_ver 1.1.1d-1
 
 %{?scl:%global _scl_prefix /opt/cpanel}
 %{?scl:%scl_package lib%{soname}}
