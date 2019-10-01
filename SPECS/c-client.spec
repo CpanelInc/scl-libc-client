@@ -35,7 +35,7 @@ Patch9: imap-2007e-shared.patch
 Patch10: imap-2007e-authmd5.patch
 Patch11: imap-2007f-cclient-only.patch
 
-Patch20: 1006_openssl1.1_autoverify.patch
+Patch20: 1006_openssl11_autoverify.patch
 Patch21: 2014_openssl1.1.1_sni.patch
 
 BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
