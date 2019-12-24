@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 14
+%define release_prefix 15
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -147,7 +147,10 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
-* Tue Feb 05 2019 Daniel Muey <dan@cpanel.net> - %{somajor}f-14
+* Tue Dec 24 2019 Daniel Muey <dan@cpanel.net> - 2007f-15
+- ZC-5915: Add PHP 7.4
+
+* Tue Feb 05 2019 Daniel Muey <dan@cpanel.net> - 2007f-14
 - ZC-4640: Add PHP 7.3
 
 * Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-13
