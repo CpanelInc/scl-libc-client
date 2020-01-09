@@ -153,8 +153,8 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
-* Tue Oct 01 2019 Julian Brown <julian.brown@cpanel.net> - %{somajor}f-16
-- ZC-4631: Update to OpenSSL1.1.1
+* Thu Jan 09 2020 Julian Brown <julian.brown@cpanel.net> - %{somajor}f-16
+- ZC-4361: Update to OpenSSL1.1.1
 
 * Tue Dec 24 2019 Daniel Muey <dan@cpanel.net> - 2007f-15
 - ZC-5915: Add PHP 7.4
