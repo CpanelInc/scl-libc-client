@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 16
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -153,6 +153,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Jan 20 2020 Daniel Muey <dan@cpanel.net> - 2007f-17
+- EA-8666: Remove PHP 7.4
+
 * Thu Jan 09 2020 Julian Brown <julian.brown@cpanel.net> - %{somajor}f-16
 - ZC-4361: Update to OpenSSL1.1.1
 
