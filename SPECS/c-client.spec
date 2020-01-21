@@ -1,7 +1,7 @@
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
-%define ea_openssl_ver 1.0.2o-2
+%define ea_openssl_ver 1.1.1d-1
 
 %{?scl:%global _scl_prefix /opt/cpanel}
 %{?scl:%scl_package lib%{soname}}
@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 14
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -35,7 +35,10 @@ Patch9: imap-2007e-shared.patch
 Patch10: imap-2007e-authmd5.patch
 Patch11: imap-2007f-cclient-only.patch
 
-BuildRequires: krb5-devel%{?_isa}, ea-openssl >= %{ea_openssl_ver}, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
+Patch20: 1006_openssl11_autoverify.patch
+Patch21: 2014_openssl1.1.1_sni.patch
+
+BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 
 %description
 Provides a common API for accessing mailboxes.
@@ -55,7 +58,7 @@ Summary: UW IMAP static library
 Group:   Development/Libraries
 Requires: %{?scl_prefix}%{pkg_name}-devel%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}%{pkg_name}-static%{?_isa} = %{version}-%{release}
-Requires: krb5-devel%{?_isa}, ea-openssl-devel%{?_isa}, pam-devel%{?_isa}
+Requires: krb5-devel%{?_isa}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 
 %description static
 Contains static libraries for developing programs
@@ -69,6 +72,9 @@ which will use the UW C-client common API.
 %patch10 -p1 -b .authmd5
 %patch11 -p1 -b .cclient
 
+%patch20 -p1
+%patch21 -p1
+
 %build
 # Kerberos setup
 test -f %{_root_sysconfdir}/profile.d/krb5-devel.sh && source %{_root_sysconfdir}/profile.d/krb5-devel.sh
@@ -76,14 +82,14 @@ test -f %{_root_sysconfdir}/profile.d/krb5.sh && source %{_root_sysconfdir}/prof
 GSSDIR=$(krb5-config --prefix)
 
 # SSL setup, probably legacy-only, but shouldn't hurt -- Rex
-export PKG_CONFIG_PATH="/opt/cpanel/ea-openssl/lib/pkgconfig/"
+export PKG_CONFIG_PATH="/opt/cpanel/ea-openssl11/lib/pkgconfig/"
 export EXTRACFLAGS="$EXTRACFLAGS $(pkg-config --cflags openssl 2>/dev/null)"
 # $RPM_OPT_FLAGS
 export EXTRACFLAGS="$EXTRACFLAGS -fPIC $RPM_OPT_FLAGS"
 # jorton added these, I'll assume he knows what he's doing. :) -- Rex
 export EXTRACFLAGS="$EXTRACFLAGS -fno-strict-aliasing"
 export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
-export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl/lib"
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
 
 echo -e "y\ny" | \
 make %{?_smp_mflags} lnp \
@@ -91,7 +97,7 @@ IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
 EXTRAAUTHENTICATORS=gss \
-SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_root_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=/opt/cpanel/ea-openssl SSLINCLUDE=/opt/cpanel/ea-openssl/include SSLKEYS=%{ssldir}/private SSLLIB=/opt/cpanel/ea-openssl/lib" \
+SPECIALS="GSSDIR=${GSSDIR} LOCKPGM=%{_root_sbindir}/mlock SSLCERTS=%{ssldir}/certs SSLDIR=/opt/cpanel/ea-openssl11 SSLINCLUDE=/opt/cpanel/ea-openssl11/include SSLKEYS=%{ssldir}/private SSLLIB=/opt/cpanel/ea-openssl11/lib" \
 SSLTYPE=unix \
 CCLIENTLIB=$(pwd)/c-client/%{shlibname} \
 SHLIBBASE=%{soname} \
@@ -147,13 +153,22 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
-* Tue Feb 05 2019 Daniel Muey <dan@cpanel.net> - %{somajor}f-14
+* Mon Jan 20 2020 Daniel Muey <dan@cpanel.net> - 2007f-17
+- EA-8666: Remove PHP 7.4
+
+* Thu Jan 09 2020 Julian Brown <julian.brown@cpanel.net> - %{somajor}f-16
+- ZC-4361: Update to OpenSSL1.1.1
+
+* Tue Dec 24 2019 Daniel Muey <dan@cpanel.net> - 2007f-15
+- ZC-5915: Add PHP 7.4
+
+* Tue Feb 05 2019 Daniel Muey <dan@cpanel.net> - 2007f-14
 - ZC-4640: Add PHP 7.3
 
 * Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2007f-13
 - EA-7382: Update dependency on ea-openssl to require the latest version with versioned symbols.
 
-* Mon Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
+* Tue Mar 20 2018 Cory McIntire <cory@cpanel.net> - 2007f-12
 - ZC-3552: Added versioning to ea-openssl requirements.
 - ZC-3552: Linked to shared openssl .so's.
 - ZC-3552: Whitespace clean up.
@@ -248,7 +263,7 @@ rm -rf %{buildroot}
 * Fri Jun 13 2008 Rex Dieter <rdieter@fedoraproject.org> 2007b-1
 - imap-2007b
 
-* Tue May 18 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-3
+* Sun May 18 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-3
 - libc-client: incomplete list of obsoletes (#446240)
 
 * Wed Mar 19 2008 Rex Dieter <rdieter@fedoraproject.org> 2007a1-2
@@ -419,7 +434,7 @@ rm -rf %{buildroot}
 - remove Obsoletes/Provides: libc-client (they can, in fact, co-xist)
 - -devel: remove O/P: libc-client-devel -> Conflicts: libc-client-devel
 
-* Thu Jul 16 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.5.a
+* Fri Jul 16 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.5.a
 - imap2004a
 
 * Tue Jul 13 2004 Rex Dieter <rexdieter at sf.net> 1:2004-0.fdr.4
