@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 18
+%define release_prefix 19
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -153,6 +153,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue May 26 2020 Julian Brown <julian.brown@cpanel.net> - 2007-19
+- ZC-6881: Build on C8
+
 * Mon Jan 27 2020 Daniel Muey <dan@cpanel.net> - 2007-18
 - ZC-5915: Rolling “scl-libc-client” back to “c653d5a”: Adding PHP 7.4
 
