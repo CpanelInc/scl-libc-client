@@ -38,6 +38,10 @@ Patch11: imap-2007f-cclient-only.patch
 Patch20: 1006_openssl11_autoverify.patch
 Patch21: 2014_openssl1.1.1_sni.patch
 
+Patch30: 0001-add-extra-to-tmp-buffer.patch
+Patch31: 0002-These-are-only-used-with-very-old-openssl.patch
+Patch32: 0003-I-cannot-seem-to-run-lint-off.patch
+
 BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 
 %description
@@ -75,6 +79,12 @@ which will use the UW C-client common API.
 %patch20 -p1
 %patch21 -p1
 
+%if 0%{?rhel} >= 8
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%endif
+
 %build
 # Kerberos setup
 test -f %{_root_sysconfdir}/profile.d/krb5-devel.sh && source %{_root_sysconfdir}/profile.d/krb5-devel.sh
@@ -92,7 +102,7 @@ export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
 export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
 
 echo -e "y\ny" | \
-make %{?_smp_mflags} lnp \
+make -d %{?_smp_mflags} lnp \
 IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
