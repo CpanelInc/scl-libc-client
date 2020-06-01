@@ -1,7 +1,8 @@
-From 9ac971d0c73b416b5faffdfd1c7e69fe249b4f31 Mon Sep 17 00:00:00 2001
+From f6bfff94cdab903e402a48c5f07636f414679474 Mon Sep 17 00:00:00 2001
 From: Julian Brown <julian.brown@cpanel.net>
-Date: Wed, 27 May 2020 12:43:45 -0500
-Subject: [PATCH] I cannot seem to run lint off
+Date: Fri, 29 May 2020 15:08:42 -0500
+Subject: [PATCH 3/3] I had to repair this code, because I could not turn lint
+ off.
 
 ---
  src/osdep/unix/flocklnx.c | 2 +-
@@ -21,5 +22,5 @@ index ca0112a..06940b8 100644
        if (op & LOCK_NB) return -1;
        sleep (5);		/* slow down in case it loops */
 -- 
-2.18.2
+2.25.1
 

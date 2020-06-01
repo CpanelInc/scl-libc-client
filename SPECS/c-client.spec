@@ -40,7 +40,7 @@ Patch21: 2014_openssl1.1.1_sni.patch
 
 Patch30: 0001-add-extra-to-tmp-buffer.patch
 Patch31: 0002-These-are-only-used-with-very-old-openssl.patch
-Patch32: 0003-I-cannot-seem-to-run-lint-off.patch
+Patch32: 0003-I-had-to-repair-this-code-because-I-could-not-turn-l.patch
 
 BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 

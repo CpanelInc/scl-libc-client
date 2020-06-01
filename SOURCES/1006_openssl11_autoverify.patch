@@ -1,7 +1,7 @@
-From cf716358a5a94517bc40d4414113fe5b010b427b Mon Sep 17 00:00:00 2001
+From 8e07593d0a77b23ab988ca9c7aeb054ff8451f21 Mon Sep 17 00:00:00 2001
 From: Julian Brown <julian.brown@cpanel.net>
-Date: Tue, 1 Oct 2019 15:02:19 -0500
-Subject: [PATCH 1/2] 1006_openssl11_autoverify
+Date: Fri, 29 May 2020 15:13:01 -0500
+Subject: [PATCH] 1006_openssl11_autoverify
 
 ---
  src/osdep/unix/ssl_unix.c | 18 +++++++++++++++---
@@ -65,5 +65,5 @@ index 3bfdff3..c699640 100644
   * Accepts: base string
   *	    pattern string
 -- 
-2.23.0
+2.25.1
 
