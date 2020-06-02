@@ -18,7 +18,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 18
+%define release_prefix 19
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -37,6 +37,10 @@ Patch11: imap-2007f-cclient-only.patch
 
 Patch20: 1006_openssl11_autoverify.patch
 Patch21: 2014_openssl1.1.1_sni.patch
+
+Patch30: 0001-add-extra-to-tmp-buffer.patch
+Patch31: 0002-These-are-only-used-with-very-old-openssl.patch
+Patch32: 0003-I-had-to-repair-this-code-because-I-could-not-turn-l.patch
 
 BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 
@@ -75,6 +79,12 @@ which will use the UW C-client common API.
 %patch20 -p1
 %patch21 -p1
 
+%if 0%{?rhel} >= 8
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%endif
+
 %build
 # Kerberos setup
 test -f %{_root_sysconfdir}/profile.d/krb5-devel.sh && source %{_root_sysconfdir}/profile.d/krb5-devel.sh
@@ -92,7 +102,7 @@ export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
 export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
 
 echo -e "y\ny" | \
-make %{?_smp_mflags} lnp \
+make -d %{?_smp_mflags} lnp \
 IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
@@ -153,6 +163,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue May 26 2020 Julian Brown <julian.brown@cpanel.net> - 2007-19
+- ZC-6881: Build on C8
+
 * Mon Jan 27 2020 Daniel Muey <dan@cpanel.net> - 2007-18
 - ZC-5915: Rolling “scl-libc-client” back to “c653d5a”: Adding PHP 7.4
 
