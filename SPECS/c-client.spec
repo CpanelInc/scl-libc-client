@@ -99,10 +99,22 @@ export EXTRACFLAGS="$EXTRACFLAGS -fPIC $RPM_OPT_FLAGS"
 # jorton added these, I'll assume he knows what he's doing. :) -- Rex
 export EXTRACFLAGS="$EXTRACFLAGS -fno-strict-aliasing"
 export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
+%if 0%{?rhel} >= 8
+# In CentOS 8, we have begun a process of what Windows Developers called DLL
+# Hell.   Linux probably has a similar expression.
+# Anyway the crux of the problem is, libc-client links agains libk5crypto.so
+# which in turn links against system openssl, libcrypto.so.
+# In CentOS 7, libk5crypto did not link against libcrypto.so, so this was
+# introduced in CentOS 8.   So how does this solve the problem?
+# Link options -rpath tell it to embed the location in the .so as a place to
+# get .so's from.
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/lib64 -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
+%else
 export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
+%endif
 
 echo -e "y\ny" | \
-make -d %{?_smp_mflags} lnp \
+make %{?_smp_mflags} lnp \
 IP=6 \
 EXTRACFLAGS="$EXTRACFLAGS" \
 EXTRALDFLAGS="$EXTRALDFLAGS" \
