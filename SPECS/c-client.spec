@@ -1,3 +1,7 @@
+%if 0%{?rhel} >= 8
+%define debug_package %{nil}
+%endif
+
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
@@ -108,7 +112,27 @@ export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
 # introduced in CentOS 8.   So how does this solve the problem?
 # Link options -rpath tell it to embed the location in the .so as a place to
 # get .so's from.
-export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/lib64 -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
+
+# MOAR fun: '-Wl,--build-id=uuid'
+# This is complex, so bear with me.  Whenever a library or executable is
+# linked in Linux, a .build_id is generated and added to the ELF.  This
+# .build_id is also shadow linked to a file in /usr/lib.   In all cases the
+# .build_id is a cryptographic signature (sha1 hash) of the binaries contents
+# and perhaps "seed".  But in the case of libc-client, we build for each
+# version of PHP, and just put the library inside the PHP directory namespace,
+# but the libraries are binarily identical (at the time of the hash).  So we
+# were getting conflicts when we installed the library on multiple versions of
+# PHP as both rpm's owned the .build_id file.  So I am telling the linker
+# instead of using the normal sha1 hash, to instead use a random uuid, so each
+# version of this library will have a different build_id.  Now further
+# consideration, the normal form of this would be -Wl,--build-id,uuid, but for
+# some reason that form works perfectly for any of the arguments that use a
+# single dash, but does not work for the double hash type.  So I did it
+# without the comma, and it is treating that as instead of a parameter, value
+# but as a single entity on the linker command line.  Man I am getting a
+# headache.
+
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/lib64 -Wl,-rpath,/opt/cpanel/ea-openssl11/lib '-Wl,--build-id=uuid'"
 %else
 export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
 %endif
