@@ -1,3 +1,7 @@
+%if 0%{?rhel} >= 8
+%define debug_package %{nil}
+%endif
+
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
@@ -18,7 +22,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 18
+%define release_prefix 19
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -37,6 +41,10 @@ Patch11: imap-2007f-cclient-only.patch
 
 Patch20: 1006_openssl11_autoverify.patch
 Patch21: 2014_openssl1.1.1_sni.patch
+
+Patch30: 0001-add-extra-to-tmp-buffer.patch
+Patch31: 0002-These-are-only-used-with-very-old-openssl.patch
+Patch32: 0003-I-had-to-repair-this-code-because-I-could-not-turn-l.patch
 
 BuildRequires: krb5-devel%{?_isa}, ea-openssl11 >= %{ea_openssl_ver}, ea-openssl11-devel%{?_isa}, pam-devel%{?_isa}
 
@@ -75,6 +83,12 @@ which will use the UW C-client common API.
 %patch20 -p1
 %patch21 -p1
 
+%if 0%{?rhel} >= 8
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%endif
+
 %build
 # Kerberos setup
 test -f %{_root_sysconfdir}/profile.d/krb5-devel.sh && source %{_root_sysconfdir}/profile.d/krb5-devel.sh
@@ -89,7 +103,39 @@ export EXTRACFLAGS="$EXTRACFLAGS -fPIC $RPM_OPT_FLAGS"
 # jorton added these, I'll assume he knows what he's doing. :) -- Rex
 export EXTRACFLAGS="$EXTRACFLAGS -fno-strict-aliasing"
 export EXTRACFLAGS="$EXTRACFLAGS -Wno-pointer-sign"
+%if 0%{?rhel} >= 8
+# In CentOS 8, we have begun a process of what Windows Developers called DLL
+# Hell.   Linux probably has a similar expression.
+# Anyway the crux of the problem is, libc-client links agains libk5crypto.so
+# which in turn links against system openssl, libcrypto.so.
+# In CentOS 7, libk5crypto did not link against libcrypto.so, so this was
+# introduced in CentOS 8.   So how does this solve the problem?
+# Link options -rpath tell it to embed the location in the .so as a place to
+# get .so's from.
+
+# MOAR fun: '-Wl,--build-id=uuid'
+# This is complex, so bear with me.  Whenever a library or executable is
+# linked in Linux, a .build_id is generated and added to the ELF.  This
+# .build_id is also shadow linked to a file in /usr/lib.   In all cases the
+# .build_id is a cryptographic signature (sha1 hash) of the binaries contents
+# and perhaps "seed".  But in the case of libc-client, we build for each
+# version of PHP, and just put the library inside the PHP directory namespace,
+# but the libraries are binarily identical (at the time of the hash).  So we
+# were getting conflicts when we installed the library on multiple versions of
+# PHP as both rpm's owned the .build_id file.  So I am telling the linker
+# instead of using the normal sha1 hash, to instead use a random uuid, so each
+# version of this library will have a different build_id.  Now further
+# consideration, the normal form of this would be -Wl,--build-id,uuid, but for
+# some reason that form works perfectly for any of the arguments that use a
+# single dash, but does not work for the double hash type.  So I did it
+# without the comma, and it is treating that as instead of a parameter, value
+# but as a single entity on the linker command line.  Man I am getting a
+# headache.
+
+export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/lib64 -Wl,-rpath,/opt/cpanel/ea-openssl11/lib '-Wl,--build-id=uuid'"
+%else
 export EXTRALDFLAGS="$EXTRALDFLAGS $(pkg-config --libs openssl 2>/dev/null) -Wl,-rpath,/opt/cpanel/ea-openssl11/lib"
+%endif
 
 echo -e "y\ny" | \
 make %{?_smp_mflags} lnp \
@@ -153,6 +199,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue May 26 2020 Julian Brown <julian.brown@cpanel.net> - 2007-19
+- ZC-6881: Build on C8
+
 * Mon Jan 27 2020 Daniel Muey <dan@cpanel.net> - 2007-18
 - ZC-5915: Rolling “scl-libc-client” back to “c653d5a”: Adding PHP 7.4
 
