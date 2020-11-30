@@ -22,7 +22,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 19
+%define release_prefix 20
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -199,6 +199,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Nov 30 2020 Daniel Muey <dan@cpanel.net> - 2007-20
+- ZC-7880: Move PHP 8.0 to production
+
 * Tue May 26 2020 Julian Brown <julian.brown@cpanel.net> - 2007-19
 - ZC-6881: Build on C8
 
