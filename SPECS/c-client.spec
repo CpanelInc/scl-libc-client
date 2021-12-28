@@ -22,7 +22,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 21
+%define release_prefix 22
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -209,6 +209,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue Dec 28 2021 Dan Muey <dan@cpanel.net> - 2007-22
+- ZC-9589: Update DISABLE_BUILD to match OBS
+
 * Fri Nov 05 2021 Julian Brown <julian.brown@cpanel.net> - 2007-21
 - ZC-8130: ZC-8130: Build for ea-php81
 
