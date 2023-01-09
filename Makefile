@@ -1,5 +1,5 @@
 OBS_PROJECT := EA4
-scl-php82-libc-client-obs : DISABLE_BUILD += repository=CentOS_6.5_standard repository=CentOS_7
+scl-php82-libc-client-obs : DISABLE_BUILD += repository=CentOS_6.5_standard
 scl-php81-libc-client-obs : DISABLE_BUILD += repository=CentOS_6.5_standard
 scl-php80-libc-client-obs : DISABLE_BUILD += repository=CentOS_6.5_standard
 scl-php74-libc-client-obs : DISABLE_BUILD += repository=CentOS_9
