@@ -22,7 +22,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 23
+%define release_prefix 24
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -209,6 +209,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Mon Jan 09 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-24
+- ZC-10585: Build for C7 
+
 * Fri Oct 07 2022 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-23
 - ZC-10359: Build for ea-php82
 
