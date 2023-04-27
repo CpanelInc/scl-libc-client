@@ -1,7 +1,3 @@
-%if 0%{?rhel} >= 8
-%define debug_package %{nil}
-%endif
-
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
@@ -210,7 +206,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Jan 09 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-24
-- ZC-10585: Build for C7 
+- ZC-10585: Build for C7
 
 * Fri Oct 07 2022 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-23
 - ZC-10359: Build for ea-php82
