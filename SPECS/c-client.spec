@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
