@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
@@ -18,7 +20,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 24
+%define release_prefix 25
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -205,6 +207,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Tue Apr 18 2023 Julian Brown <julian.brown@cpanel.net> - 2007-25
+- ZC-10320: Update Makefile for Ubuntu 22
+
 * Mon Jan 09 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-24
 - ZC-10585: Build for C7
 
