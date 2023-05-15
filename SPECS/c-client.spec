@@ -21,7 +21,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 27
+%define release_prefix 28
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -208,6 +208,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Thu May 18 2023 Julian Brown <julian.brown@cpanel.net> - 2007-28
+- ZC-10931: Stop building for ea-php74+
+
 * Wed May 17 2023 Julian Brown <julian.brown@cpanel.net> - 2007-27
 - ZC-10950: Fix build problems
 
