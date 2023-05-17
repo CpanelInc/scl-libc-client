@@ -1,3 +1,6 @@
+%define debug_package %{nil}
+%define _enable_debug_packages %{nil}
+
 %define soname    c-client
 %define somajor   2007
 %define shlibname lib%{soname}.so.%{somajor}
@@ -18,7 +21,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 26
+%define release_prefix 27
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -205,6 +208,9 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Wed May 17 2023 Julian Brown <julian.brown@cpanel.net> - 2007-27
+- ZC-10950: Fix build problems
+
 * Wed May 10 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-26
 - ZC-10936: Clean up Makefile and remove debug-package-nil
 
