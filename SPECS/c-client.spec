@@ -1,6 +1,5 @@
-%if 0%{?rhel} >= 8
 %define debug_package %{nil}
-%endif
+%define _enable_debug_packages %{nil}
 
 %define soname    c-client
 %define somajor   2007
@@ -22,7 +21,7 @@
 Name:    %{?scl_prefix}lib%{soname}
 Version: %{somajor}f
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4574 for more details
-%define release_prefix 24
+%define release_prefix 28
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: UW C-client mail library
 Group:   System Environment/Libraries
@@ -209,8 +208,20 @@ rm -rf %{buildroot}
 %{_libdir}/libc-client.a
 
 %changelog
+* Thu May 18 2023 Julian Brown <julian.brown@cpanel.net> - 2007-28
+- ZC-10931: Stop building for ea-php74+
+
+* Wed May 17 2023 Julian Brown <julian.brown@cpanel.net> - 2007-27
+- ZC-10950: Fix build problems
+
+* Wed May 10 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-26
+- ZC-10936: Clean up Makefile and remove debug-package-nil
+
+* Tue Apr 18 2023 Julian Brown <julian.brown@cpanel.net> - 2007-25
+- ZC-10320: Update Makefile for Ubuntu 22
+
 * Mon Jan 09 2023 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-24
-- ZC-10585: Build for C7 
+- ZC-10585: Build for C7
 
 * Fri Oct 07 2022 Brian Mendoza <brian.mendoza@cpanel.net> - 2007-23
 - ZC-10359: Build for ea-php82
